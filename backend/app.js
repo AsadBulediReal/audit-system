@@ -17,13 +17,16 @@ app.use(cors());
 
 app.post("/report", async (req, res) => {
   await db.connectDB();
+
   const savedFilePath = path.join(__dirname, "excel-file", "asad.xlsx"); // Adjust filename as needed
+
+  const exists = fs.existsSync(savedFilePath);
+
   const createFile = (data) => {
     const dataToJson = JSON.stringify(data);
     const worksheet = xlsx.utils.json_to_sheet(JSON.parse(dataToJson));
     const workbook = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
     // Save the file to the "excel-file" folder:
     xlsx.writeFile(workbook, savedFilePath);
   };
@@ -34,6 +37,11 @@ app.post("/report", async (req, res) => {
     .exec();
 
   createFile(admission);
+
+  if (!exists) {
+    return res.status(200);
+  }
+
   return res.status(200).sendFile(savedFilePath);
 });
 
