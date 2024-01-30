@@ -83,14 +83,13 @@ app.post("/upload", async (req, res) => {
   });
 
   await db.connectDB();
-  // Convert the Excel file to JSON after 2 seconds
+
   async function ConvetToJson(excelFilePath) {
     const workbook = xlsx.readFile(excelFilePath);
     const sheetName = workbook.SheetNames[0];
     const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
       header: 1,
     });
-
     return rawData;
   }
 
@@ -148,10 +147,10 @@ app.post("/upload", async (req, res) => {
     }
 
     await auditData(execl);
-
-    const savedFilePath = path.join(__dirname, "excel-file", "asad" + fileName); // Adjust filename as needed
     if (!exists) {
-      return res.status(200).sendFile(savedFilePath);
+      return res
+        .status(200)
+        .json({ status: 200, message: "file successfully uploaded" });
     }
   }, 1000);
 });
