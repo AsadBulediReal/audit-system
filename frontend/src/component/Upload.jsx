@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "../App.css";
 import { AiOutlineCloudUpload, AiFillFileExcel } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";

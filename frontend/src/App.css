@@ -13,11 +13,24 @@
 
 body {
   background-color: var(--azure);
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+ul,
+a {
+  list-style: none;
+  text-decoration: none;
+  color: var(--ivory);
+  padding: 0;
+  margin: 0;
+  transition: all 250ms ease-in-out;
 }
 
 .btn {
   color: var(--ivory);
-  background-color: var(--azure);
+  background-color: var(--prussian-blue);
   padding: 1rem 2rem;
   border: none;
   border-radius: 10px;
@@ -30,6 +43,11 @@ body {
 
 .btn:hover {
   background-color: var(--dark-blue);
+}
+
+.button {
+  display: flex;
+  justify-content: center;
 }
 
 /* Upload page */
@@ -176,4 +194,206 @@ section .row .details span {
   color: var(--dark-blue);
   font-size: 2rem;
   font-weight: bold;
+}
+
+/* report */
+
+.report form {
+  gap: 0;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+}
+
+.report .by-cmd {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  width: 550px;
+}
+
+.report .by-cmd div .date {
+  gap: 0;
+  background-color: var(--prussian-blue);
+  text-align: center;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.report .by-cmd input {
+  padding-left: 10px;
+  padding-bottom: 18px;
+}
+
+.report .by-cmd div .date {
+  flex-direction: row;
+}
+
+.report .input-container {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+form select,
+input {
+  padding: 1rem 2rem;
+  color: var(--ivory);
+  background-color: var(--prussian-blue);
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.date label {
+  color: var(--ivory);
+}
+
+.report .multi-select div {
+  color: var(--ivory) !important;
+}
+
+.rmsc {
+  --rmsc-gray: var(--ivory) !important;
+  --rmsc-hover: var(--azure) !important;
+  --rmsc-bg: var(--prussian-blue) !important;
+  --rmsc-selected: var(--oxford-blue) !important;
+}
+
+input::placeholder {
+  color: var(--ivory) !important;
+}
+
+.report .multi-select div input:focus-visible {
+  background-color: var(--oxford-blue) !important;
+}
+
+.rmsc {
+  margin-bottom: 1rem;
+}
+
+.by-cmd h1 {
+  color: var(--ivory);
+}
+.rmsc .dropdown-container {
+  border: none !important;
+  padding: 0.5rem;
+}
+
+.report .date-container {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  z-index: 10;
+  background-color: var(--prussian-blue);
+}
+
+a:hover{
+  background-color: var(--azure);
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+nav img {
+  width: 120px;
+  height: 120px;
+}
+
+nav .logo-container a {
+  display: flex;
+  align-items: center;
+}
+
+nav .logo-container div,
+.logo-container .cmd-text {
+  text-align: center;
+}
+
+nav .logo-container div p:nth-child(1),
+.logo-container .cmd-text p:nth-child(1) {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+nav .logo-container div p:nth-child(2),
+.logo-container .cmd-text p:nth-child(2) {
+  font-weight: bold;
+  margin: 0;
+}
+
+nav .logo-container a:hover {
+  padding: 0;
+  background-color: transparent;
+  color: #b8b8b8;
+}
+nav ul {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 9;
+  margin-right: 2rem;
+}
+
+nav ul li {
+  position: relative;
+  font-size: 1.5rem;
+}
+
+nav ul h2 {
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+nav ul h2 span {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding-left: 8px;
+  margin-bottom: 4px;
+}
+
+nav ul .drop-down div {
+  opacity: 0;
+  transition: all 250ms ease-in-out;
+}
+
+nav ul .open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 200px;
+  background-color: var(--prussian-blue);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  opacity: 1;
+  transition: all 250ms ease-in-out;
+}
+nav ul .open a {
+  padding: 1rem 0;
+}
+
+nav ul .outline {
+  border-color: #b30000;
+}
+
+nav ul .outline:hover {
+  background-color: #b30000;
+  color: var(--ivory);
 }
