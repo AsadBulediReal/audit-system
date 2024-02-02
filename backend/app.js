@@ -4,45 +4,135 @@ const app = require("express")();
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const xlsx = require("xlsx");
-
+const moment = require("moment");
 const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db/db");
+const archiver = require("archiver");
+app.use(cors());
 
 // Add the express-fileupload middleware
 app.use(fileUpload({ createParentPath: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(bodyParser.json()); // Use body-parser.json for JSON data
+
+const zipFile = (createdfiles, res) => {
+  const archiveName = "report.zip";
+
+  const output = fs.createWriteStream(archiveName);
+  const archive = archiver("zip");
+
+  archive.on("error", (err) => {
+    throw err; // Rethrow error for Express error handling
+  });
+
+  output.on("end", function () {
+    console.log("Data has been drained");
+  });
+
+  // good practice to catch warnings (ie stat failures and other non-blocking errors)
+  archive.on("warning", function (err) {
+    if (err.code === "ENOENT") {
+      // log warning
+    } else {
+      // throw error
+      throw err;
+    }
+  });
+
+  archive.pipe(output);
+
+  createdfiles.forEach((file) => {
+    const filePath = path.join(__dirname, "generated-report", file);
+    if (fs.existsSync(filePath)) {
+      archive.file(filePath, { name: file }); // Preserve original filenames in the archive
+    }
+  });
+
+  output.on("close", () => {
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename=${archiveName}`);
+    fs.createReadStream(archiveName).pipe(res);
+    setTimeout(() => {
+      const folderPath = path.join(__dirname, "generated-report");
+      fs.unlinkSync(archiveName);
+      fs.rmSync(folderPath, { recursive: true });
+    }, 1500);
+  });
+  archive.finalize();
+};
 
 app.post("/report", async (req, res) => {
+  const { fromDate, toDate, selectedData } = req.body;
   await db.connectDB();
 
-  const savedFilePath = path.join(__dirname, "excel-file", "asad.xlsx"); // Adjust filename as needed
-
-  const exists = fs.existsSync(savedFilePath);
-
-  const createFile = (data) => {
+  const createFile = (data, fileName) => {
     const dataToJson = JSON.stringify(data);
     const worksheet = xlsx.utils.json_to_sheet(JSON.parse(dataToJson));
     const workbook = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    // Save the file to the "excel-file" folder:
+
+    if (!fs.existsSync("generated-report")) {
+      fs.mkdirSync("generated-report");
+    }
+
+    const formattedDate = new Date().toLocaleDateString("en-GB").split("/");
+    const date = `${formattedDate[0]}-${formattedDate[1]}-${formattedDate[2]}`;
+
+    const name = fileName + " " + date + " .xlsx";
+
+    const savedFilePath = path.join(__dirname, "generated-report", name);
     xlsx.writeFile(workbook, savedFilePath);
+    return name;
   };
+  const fromDateFormated = new Date(fromDate);
+  const toDateFormated = new Date(toDate);
 
-  const admission = await db["admission_fee"]
-    .find({ Amount: 42000 })
-    .select("-comments -__v -_id")
-    .exec();
+  const createdfiles = [];
+  for (const selectedCategory of selectedData) {
+    const getReport = await db[selectedCategory]
+      .find({
+        "Transaction Date": { $gte: fromDateFormated, $lte: toDateFormated },
+      })
+      .select("-comments -__v -_id")
+      .exec();
 
-  createFile(admission);
+    const data = [];
+    const jsondata = JSON.stringify(getReport);
+    const parsedData = JSON.parse(jsondata);
 
-  if (!exists) {
-    return res.status(200);
+    parsedData.forEach((item) => {
+      const formattedDate = new Date(item["Transaction Date"])
+        .toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+        .split(" ");
+      const date = `${formattedDate[0]}-${formattedDate[1]}-${formattedDate[2]}`;
+
+      const formattedTime = new Date(
+        "2024-02-02 " + item["Transaction Time"]
+      ).toLocaleTimeString("en-US", { hour12: true });
+
+      const updateDate = {
+        ...item,
+        "Transaction Date": date,
+        "Transaction Time": formattedTime,
+      };
+      data.push(updateDate);
+    });
+
+    const fileName = createFile(data, selectedCategory);
+    createdfiles.push(fileName);
   }
 
-  return res.status(200).sendFile(savedFilePath);
+  if (
+    fs.existsSync(path.join(__dirname, "generated-report", createdfiles[0]))
+  ) {
+    zipFile(createdfiles, res);
+  }
 });
 
 app.post("/upload", async (req, res) => {
@@ -137,7 +227,6 @@ app.post("/upload", async (req, res) => {
 
   setTimeout(async () => {
     const data = await ConvetToJson(file);
-    console.log(data.length);
 
     const execl = [];
     for (let i = 0; i < data.length; i++) {

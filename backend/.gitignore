@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 excel-file
+generated-report
 
 
 # Editor directories and files
