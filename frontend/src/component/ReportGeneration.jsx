@@ -86,6 +86,7 @@ const ReportGeneration = ({ users }) => {
   const [formData, setFormData] = useState({});
   const [selected, setSelected] = useState([]);
 
+  console.log(selected);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -111,17 +112,25 @@ const ReportGeneration = ({ users }) => {
       input.value = "";
     });
 
-    const data = { ...formData };
+    const selectedData = [];
 
+    for (let i = 0; i < selected.length; i++) {
+      selectedData.push(selected[i].value);
+    }
+    console.log(selectedData);
+
+    const data = { ...formData, selectedData: selectedData };
+
+    console.log(data);
     try {
       const reportData = await toast.promise(
         axios({
           method: "post",
           url: "http://localhost:3000/report",
-          data: selected,
+          data: JSON.stringify(data),
           responseType: "blob",
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }),
         {
@@ -136,6 +145,14 @@ const ReportGeneration = ({ users }) => {
           },
         }
       );
+
+      const excelBlob = new Blob([reportData.data]);
+      const url = URL.createObjectURL(excelBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      const formattedDate = new Date().toLocaleDateString("en-GB");
+      link.download = "Report " + formattedDate + " .zip"; // Use a descriptive filename
+      link.click();
 
       setSelected([]);
       setFormData({});
