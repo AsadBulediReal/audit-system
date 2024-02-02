@@ -1,7 +1,11 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { AiOutlineCloudUpload, AiFillFileExcel } from "react-icons/ai";
+import {
+  AiOutlineCloudUpload,
+  AiFillFileExcel,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import { BiSolidError } from "react-icons/bi";
@@ -15,6 +19,7 @@ const UploadFile = () => {
   const [error, setError] = useState(false);
   const [oneFile, setOneFile] = useState(false);
   const [button, setButton] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -83,6 +88,7 @@ const UploadFile = () => {
     // Check if the files state array is not empty before trying to update it.
     if (files.length > 0) {
       try {
+        setLoading(true);
         const response = await axios.post(
           "http://localhost:3000/upload",
           formData,
@@ -111,6 +117,7 @@ const UploadFile = () => {
             },
           }
         );
+        setLoading(false);
 
         const handeldata = (response) => {
           if (response.data.status === 200) {
@@ -246,10 +253,19 @@ const UploadFile = () => {
                   <span className="size">{file.size}</span>
                 </div>
               </div>
-              {error ? (
-                <BiSolidError style={{ color: "#e60000", fontSize: "2rem" }} />
-              ) : (
-                <BsCheck2Circle className="check" />
+              {loading && (
+                <AiOutlineLoading3Quarters className="loading" style={{ fontSize: "2rem" }} />
+              )}
+              {!loading && (
+                <div>
+                  {error ? (
+                    <BiSolidError
+                      style={{ color: "#e60000", fontSize: "2rem" }}
+                    />
+                  ) : (
+                    <BsCheck2Circle className="check" />
+                  )}
+                </div>
               )}
             </li>
           );

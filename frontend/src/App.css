@@ -297,7 +297,7 @@ nav {
   background-color: var(--prussian-blue);
 }
 
-a:hover{
+a:hover {
   background-color: var(--azure);
   padding: 1rem;
   border-radius: 10px;
@@ -396,4 +396,18 @@ nav ul .outline {
 nav ul .outline:hover {
   background-color: #b30000;
   color: var(--ivory);
+}
+
+.loading {
+  font-size: 1.5rem;
+  animation: loading 2s linear infinite normal;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }

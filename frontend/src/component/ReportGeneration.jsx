@@ -173,7 +173,7 @@ const ReportGeneration = ({ users }) => {
         </div>
         <div className="button">
           <button className="btn" type="submit">
-            submit
+            Generate Report
           </button>
         </div>
       </form>
