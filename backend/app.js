@@ -148,18 +148,6 @@ app.post("/upload", async (req, res) => {
     file = filePath;
     fileName = files[key].name;
 
-    // Check if the file exists.
-    exists = fs.existsSync(filePath);
-
-    // If the file exists, do not run the `files[key].mv()` function.
-    if (exists) {
-      return res.status(200).json({
-        status: 400,
-        message: "please dont upload same file",
-        title: "Same File",
-      });
-    }
-
     // Move the file to the destination directory.
     await files[key].mv(filePath, (err) => {
       if (err) {
@@ -228,6 +216,41 @@ app.post("/upload", async (req, res) => {
   setTimeout(async () => {
     const data = await ConvetToJson(file);
 
+    const categories = {
+      10: "examination_semester",
+      20: "admission_processing_fee",
+      21: "admission_fee",
+      22: "admission_retain",
+      30: "drgs_admission_processing_fee",
+      31: "drgs_challan",
+      40: "hostel_accomodation_fee_boys",
+      41: "hostel_accomodation_fee_girls",
+      43: "hostel_accomodation_fee_girls_pg",
+      50: "examination_annual_certificate",
+      51: "general_branch_annual",
+      52: "examination_annual_exam_fee",
+      53: "general_branch_on_campus",
+      54: "examination_semester_affailated_college",
+      61: "sutc",
+    };
+
+    const getCategorie = data[8][1].substr(0, 2);
+    const isTheDataExsits = await db[categories[getCategorie]].find({
+      "Challan Number": data[8][1],
+    });
+
+    if (isTheDataExsits.length > 0) {
+      exists = true;
+      res.status(200).json({
+        status: 400,
+        message: "please dont upload the already uploaded file",
+        title: "Same File",
+      });
+      const folderPath = path.join(__dirname, "excel-file");
+      fs.rmSync(folderPath, { recursive: true });
+      return;
+    }
+
     const execl = [];
     for (let i = 0; i < data.length; i++) {
       if (i > 7) {
@@ -237,6 +260,8 @@ app.post("/upload", async (req, res) => {
 
     await auditData(execl);
     if (!exists) {
+      const folderPath = path.join(__dirname, "excel-file");
+      fs.rmSync(folderPath, { recursive: true });
       return res
         .status(200)
         .json({ status: 200, message: "file successfully uploaded" });
