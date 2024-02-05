@@ -4,7 +4,6 @@ const app = require("express")();
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const xlsx = require("xlsx");
-const moment = require("moment");
 const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -77,10 +76,7 @@ app.post("/report", async (req, res) => {
       fs.mkdirSync("generated-report");
     }
 
-    const formattedDate = new Date().toLocaleDateString("en-GB").split("/");
-    const date = `${formattedDate[0]}-${formattedDate[1]}-${formattedDate[2]}`;
-
-    const name = fileName + " " + date + " .xlsx";
+    const name = fileName + " .xlsx";
 
     const savedFilePath = path.join(__dirname, "generated-report", name);
     xlsx.writeFile(workbook, savedFilePath);
@@ -89,8 +85,10 @@ app.post("/report", async (req, res) => {
   const fromDateFormated = new Date(fromDate);
   const toDateFormated = new Date(toDate);
 
+  const getSelectedData = [...selectedData, "nullData"];
+
   const createdfiles = [];
-  for (const selectedCategory of selectedData) {
+  for (const selectedCategory of getSelectedData) {
     const getReport = await db[selectedCategory]
       .find({
         "Transaction Date": { $gte: fromDateFormated, $lte: toDateFormated },
@@ -191,9 +189,29 @@ app.post("/upload", async (req, res) => {
     };
 
     data.map(async (record) => {
-      const getChallan = record[1].substr(0, 2);
+      const getChallan = record[1].toString().substr(0, 2);
+      console.log(getChallan);
       const getCategorie = await categories[getChallan];
       const challan = Number(record[1]);
+
+      if (getCategorie === undefined) {
+        db["nullData"].create({
+          "Tran Id": record[0],
+          "Challan Number": challan,
+          "Student Name": record[2],
+          "Father Name": record[3],
+          Surname: record[4],
+          CNIC: record[5],
+          Program: record[6],
+          Description: record[7],
+          Company: record[8],
+          Amount: record[9],
+          Channel: record[10],
+          "Transaction Date": record[11],
+          "Transaction Time": record[12],
+        });
+        return;
+      }
 
       db[getCategorie].create({
         "Tran Id": record[0],
@@ -216,6 +234,17 @@ app.post("/upload", async (req, res) => {
   setTimeout(async () => {
     const data = await ConvetToJson(file);
 
+    if (data[0][0] !== "Report Name:Auto HBPS - Uni of Sindh Daily MIS") {
+      exists = true;
+      res.status(200).json({
+        status: 400,
+        message: "Please dont upload wrong file",
+        title: "Wrong file",
+      });
+      const folderPath = path.join(__dirname, "excel-file");
+      fs.rmSync(folderPath, { recursive: true });
+      return;
+    }
     const categories = {
       10: "examination_semester",
       20: "admission_processing_fee",

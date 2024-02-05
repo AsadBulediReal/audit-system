@@ -20,6 +20,22 @@ const sechema = new mongoose.Schema({
   "Transaction Time": { type: String, required: true },
 });
 
+const nullSechema = new mongoose.Schema({
+  "Tran Id": { type: Number },
+  "Challan Number": { type: String },
+  "Student Name": { type: String },
+  "Father Name": { type: String },
+  Surname: { type: String },
+  CNIC: { type: String },
+  Program: { type: String },
+  Description: { type: String },
+  Company: { type: String },
+  Amount: { type: Number },
+  Channel: { type: String },
+  "Transaction Date": { type: Date },
+  "Transaction Time": { type: String },
+});
+
 const examination_semester = mongoose.model("examination_semester", sechema);
 const admission_processing_fee = mongoose.model(
   "admission_processing_fee",
@@ -63,6 +79,8 @@ const examination_semester_affailated_college = mongoose.model(
 );
 const sutc = mongoose.model("sutc", sechema);
 
+const nullData = mongoose.model("null", nullSechema);
+
 module.exports = {
   connectDB,
   examination_semester,
@@ -80,4 +98,5 @@ module.exports = {
   hostel_accomodation_fee_girls,
   hostel_accomodation_fee_girls_pg,
   sutc,
+  nullData,
 };
