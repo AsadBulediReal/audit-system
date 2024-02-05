@@ -2,9 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { useEffect, useState } from "react";
 import UploadFile from "./component/Upload";
-import axios from "axios";
 import ReportGeneration from "./component/ReportGeneration";
 import Navbar from "./component/Navbar";
 import { ToastContainer } from "react-toastify";
@@ -30,7 +28,7 @@ function App() {
       <Routes>
         <Route path="/report" element={<ReportGeneration />} />
         <Route path="/upload" element={<UploadFile />} />
-        <Route path="/" element={<Navigate to="/report" />} />
+        <Route path="*" element={<Navigate to="/report" />} />
       </Routes>
     </>
   );

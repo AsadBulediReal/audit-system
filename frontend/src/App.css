@@ -1,8 +1,8 @@
 :root {
   /* CSS HEX */
-  --prussian-blue: #005380;
+  --gray: #16191f;
   --ivory: #fffff3ff;
-  --azure: #007fffff;
+  --white: white;
   --light-azure: #61b0ff;
   --malachite: rgb(0, 150, 60);
   --oxford-blue: #003049ff;
@@ -12,10 +12,19 @@
 }
 
 body {
-  background-color: var(--azure);
+  background-color: var(--white);
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  background-color: #ffffff;
+  opacity: 1;
+  background-image: radial-gradient(
+      #141414 0.8500000000000001px,
+      transparent 0.8500000000000001px
+    ),
+    radial-gradient(#141414 0.8500000000000001px, #ffffff 0.8500000000000001px);
+  background-size: 34px 34px;
+  background-position: 0 0, 17px 17px;
 }
 
 ul,
@@ -30,11 +39,11 @@ a {
 
 .btn {
   color: var(--ivory);
-  background-color: var(--prussian-blue);
+  background-color: var(--gray);
   padding: 1rem 2rem;
   border: none;
   border-radius: 10px;
-  border: 1px solid var(--azure);
+  border: 1px solid var(--white);
   transition: all 250ms ease-in-out;
   font-size: 1.2rem;
   text-transform: capitalize;
@@ -59,7 +68,7 @@ a {
   padding: 15px;
   box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.425);
   margin-top: 4rem;
-  color: var(--prussian-blue);
+  color: var(--gray);
   text-align: center;
 }
 .upload-box form > p,
@@ -84,24 +93,24 @@ a {
 }
 
 .upload-box form > p:hover {
-  color: var(--azure);
+  color: var(--white);
   transition: all 250ms ease-in-out;
 }
 
 .upload-box .upload-icon {
   font-size: 14rem;
-  color: var(--azure);
+  color: var(--gray);
 }
 .upload-box form {
   display: flex;
-  color: var(--prussian-blue);
+  color: var(--gray);
   cursor: pointer;
   margin: 20px 0 10px 0;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   border-radius: 5px;
-  border: 2px dashed var(--azure);
+  border: 2px dashed var(--gray);
   gap: 0;
   padding: 2rem;
 }
@@ -215,7 +224,7 @@ section .row .details span {
 
 .report .by-cmd div .date {
   gap: 0;
-  background-color: var(--prussian-blue);
+  background-color: var(--gray);
   text-align: center;
   border-radius: 10px;
   width: 100%;
@@ -241,7 +250,7 @@ form select,
 input {
   padding: 1rem 2rem;
   color: var(--ivory);
-  background-color: var(--prussian-blue);
+  background-color: var(--gray);
   border-radius: 10px;
   border: none;
   cursor: pointer;
@@ -258,8 +267,8 @@ input {
 
 .rmsc {
   --rmsc-gray: var(--ivory) !important;
-  --rmsc-hover: var(--azure) !important;
-  --rmsc-bg: var(--prussian-blue) !important;
+  --rmsc-hover: var(--oxford-blue) !important;
+  --rmsc-bg: var(--gray) !important;
   --rmsc-selected: var(--oxford-blue) !important;
 }
 
@@ -276,7 +285,7 @@ input::placeholder {
 }
 
 .by-cmd h1 {
-  color: var(--ivory);
+  color: var(--gray);
 }
 .rmsc .dropdown-container {
   border: none !important;
@@ -294,11 +303,63 @@ nav {
   justify-content: space-between;
   padding-top: 10px;
   z-index: 10;
-  background-color: var(--prussian-blue);
+  background-color: var(--gray);
+  background-color: #000000;
+  opacity: 1;
+  background-image: linear-gradient(
+      30deg,
+      #414141 12%,
+      transparent 12.5%,
+      transparent 87%,
+      #414141 87.5%,
+      #414141
+    ),
+    linear-gradient(
+      150deg,
+      #414141 12%,
+      transparent 12.5%,
+      transparent 87%,
+      #414141 87.5%,
+      #414141
+    ),
+    linear-gradient(
+      30deg,
+      #414141 12%,
+      transparent 12.5%,
+      transparent 87%,
+      #414141 87.5%,
+      #414141
+    ),
+    linear-gradient(
+      150deg,
+      #414141 12%,
+      transparent 12.5%,
+      transparent 87%,
+      #414141 87.5%,
+      #414141
+    ),
+    linear-gradient(
+      60deg,
+      #41414177 25%,
+      transparent 25.5%,
+      transparent 75%,
+      #41414177 75%,
+      #41414177
+    ),
+    linear-gradient(
+      60deg,
+      #41414177 25%,
+      transparent 25.5%,
+      transparent 75%,
+      #41414177 75%,
+      #41414177
+    );
+  background-size: 30px 53px;
+  background-position: 0 0, 0 0, 15px 26px, 15px 26px, 0 0, 15px 26px;
 }
 
 a:hover {
-  background-color: var(--azure);
+  background-color: var(--dark-blue);
   padding: 1rem;
   border-radius: 10px;
 }
@@ -378,7 +439,7 @@ nav ul .open {
   top: 80px;
   left: 0;
   width: 200px;
-  background-color: var(--prussian-blue);
+  background-color: var(--gray);
   border-radius: 10px;
   padding: 1rem;
   text-align: center;
@@ -389,13 +450,8 @@ nav ul .open a {
   padding: 1rem 0;
 }
 
-nav ul .outline {
-  border-color: #b30000;
-}
-
-nav ul .outline:hover {
-  background-color: #b30000;
-  color: var(--ivory);
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 .loading {
