@@ -190,7 +190,6 @@ app.post("/upload", async (req, res) => {
 
     data.map(async (record) => {
       const getChallan = record[1].toString().substr(0, 2);
-      console.log(getChallan);
       const getCategorie = await categories[getChallan];
       const challan = Number(record[1]);
 
