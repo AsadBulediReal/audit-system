@@ -195,37 +195,37 @@ app.post("/upload", async (req, res) => {
 
       if (getCategorie === undefined) {
         db["nullData"].create({
-          "Tran Id": record[0],
-          "Challan Number": challan,
-          "Student Name": record[2],
-          "Father Name": record[3],
-          Surname: record[4],
-          CNIC: record[5],
-          Program: record[6],
-          Description: record[7],
-          Company: record[8],
-          Amount: record[9],
-          Channel: record[10],
-          "Transaction Date": record[11],
-          "Transaction Time": record[12],
+          "Tran Id": record[0] || "No Data",
+          "Challan Number": challan || "No Data",
+          "Student Name": record[2] || "No Data",
+          "Father Name": record[3] || "No Data",
+          Surname: record[4] || "No Data",
+          CNIC: record[5] || "No Data",
+          Program: record[6] || "No Data",
+          Description: record[7] || "No Data",
+          Company: record[8] || "No Data",
+          Amount: record[9] || "No Data",
+          Channel: record[10] || "No Data",
+          "Transaction Date": record[11] || "No Data",
+          "Transaction Time": record[12] || "No Data",
         });
         return;
       }
 
       db[getCategorie].create({
-        "Tran Id": record[0],
-        "Challan Number": challan,
-        "Student Name": record[2],
-        "Father Name": record[3],
-        Surname: record[4],
-        CNIC: record[5],
-        Program: record[6],
-        Description: record[7],
-        Company: record[8],
-        Amount: record[9],
-        Channel: record[10],
-        "Transaction Date": record[11],
-        "Transaction Time": record[12],
+        "Tran Id": record[0] || "No Data",
+        "Challan Number": challan || "No Data",
+        "Student Name": record[2] || "No Data",
+        "Father Name": record[3] || "No Data",
+        Surname: record[4] || "No Data",
+        CNIC: record[5] || "No Data",
+        Program: record[6] || "No Data",
+        Description: record[7] || "No Data",
+        Company: record[8] || "No Data",
+        Amount: record[9] || "No Data",
+        Channel: record[10] || "No Data",
+        "Transaction Date": record[11] || "No Data",
+        "Transaction Time": record[12] || "No Data",
       });
     });
   };
