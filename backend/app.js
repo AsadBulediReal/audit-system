@@ -264,7 +264,7 @@ app.post("/upload", async (req, res) => {
 
     for (let i = 11; i < data.length; i++) {
       if (data[i][2] && isNumber(data[i][2])) {
-        getCategorie = data[i][2].toString().substr(0, 2);
+        getCategorie = data[i][2].toString()?.substr(0, 2);
         recordFound = true;
         break;
       }
@@ -277,7 +277,7 @@ app.post("/upload", async (req, res) => {
         "Challan Number": data[11][2],
       });
     }
-    if (isTheDataExsits.length > 0) {
+    if (isTheDataExsits?.length > 0) {
       exists = true;
       res.status(200).json({
         status: 400,
