@@ -110,14 +110,9 @@ app.post("/report", async (req, res) => {
         .split(" ");
       const date = `${formattedDate[0]}-${formattedDate[1]}-${formattedDate[2]}`;
 
-      const formattedTime = new Date(
-        "2024-02-02 " + item["Transaction Time"]
-      ).toLocaleTimeString("en-US", { hour12: true });
-
       const updateDate = {
         ...item,
         "Transaction Date": date,
-        "Transaction Time": formattedTime,
       };
       data.push(updateDate);
     });
@@ -139,7 +134,6 @@ app.post("/upload", async (req, res) => {
   // Declare the variable `exists` outside of the `forEach()` loop.
   let exists = false;
   let file;
-  let fileName;
 
   Object.keys(files).forEach(async (key) => {
     const filePath = path.join(__dirname, "excel-file", files[key].name);
@@ -161,7 +155,9 @@ app.post("/upload", async (req, res) => {
   await db.connectDB();
 
   async function ConvetToJson(excelFilePath) {
-    const workbook = xlsx.readFile(excelFilePath);
+    const workbook = xlsx.readFile(excelFilePath, {
+      cellDates: true,
+    });
     const sheetName = workbook.SheetNames[0];
     const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], {
       header: 1,
@@ -189,43 +185,39 @@ app.post("/upload", async (req, res) => {
     };
 
     data.map(async (record) => {
-      const getChallan = record[1].toString().substr(0, 2);
+      const getChallan = record[2]?.toString().substr(0, 2);
       const getCategorie = await categories[getChallan];
-      const challan = Number(record[1]);
+      const challan = Number(record[2]);
+
+      const formatDate = record && record[1] ? record[1].split("-") : false;
+
+      const date = formatDate
+        ? `${formatDate[2]}/${formatDate[1]}/${formatDate[0]}`
+        : undefined;
 
       if (getCategorie === undefined) {
         db["nullData"].create({
-          "Tran Id": record[0] || "No Data",
-          "Challan Number": challan || "No Data",
-          "Student Name": record[2] || "No Data",
-          "Father Name": record[3] || "No Data",
-          Surname: record[4] || "No Data",
-          CNIC: record[5] || "No Data",
+          "Challan Number": challan || 0,
+          "Student Name": record[3] || "No Data",
+          "Father Name": record[4] || "No Data",
+          Surname: record[5] || "No Data",
           Program: record[6] || "No Data",
+          Amount: record[0] || 0,
           Description: record[7] || "No Data",
-          Company: record[8] || "No Data",
-          Amount: record[9] || "No Data",
-          Channel: record[10] || "No Data",
-          "Transaction Date": record[11] || "No Data",
-          "Transaction Time": record[12] || "No Data",
+          "Transaction Date": date || 0,
         });
         return;
       }
 
       db[getCategorie].create({
-        "Tran Id": record[0] || "No Data",
-        "Challan Number": challan || "No Data",
-        "Student Name": record[2] || "No Data",
-        "Father Name": record[3] || "No Data",
-        Surname: record[4] || "No Data",
-        CNIC: record[5] || "No Data",
+        "Challan Number": challan || 0,
+        "Student Name": record[3] || "No Data",
+        "Father Name": record[4] || "No Data",
+        Surname: record[5] || "No Data",
         Program: record[6] || "No Data",
+        Amount: record[0] || 0,
         Description: record[7] || "No Data",
-        Company: record[8] || "No Data",
-        Amount: record[9] || "No Data",
-        Channel: record[10] || "No Data",
-        "Transaction Date": record[11] || "No Data",
-        "Transaction Time": record[12] || "No Data",
+        "Transaction Date": date || 0,
       });
     });
   };
@@ -233,7 +225,7 @@ app.post("/upload", async (req, res) => {
   setTimeout(async () => {
     const data = await ConvetToJson(file);
 
-    if (data[0][0] !== "Report Name:Auto HBPS - Uni of Sindh Daily MIS") {
+    if (data[2][0] !== "00427992409403 - UOS 01 1B") {
       exists = true;
       res.status(200).json({
         status: 400,
@@ -262,11 +254,29 @@ app.post("/upload", async (req, res) => {
       61: "sutc",
     };
 
-    const getCategorie = data[8][1].substr(0, 2);
-    const isTheDataExsits = await db[categories[getCategorie]].find({
-      "Challan Number": data[8][1],
-    });
+    console.log(data[9]);
 
+    let getCategorie;
+    let recordFound = false;
+
+    // Function to check if a value is a number
+    const isNumber = (value) => !isNaN(value) && value !== "";
+
+    for (let i = 11; i < data.length; i++) {
+      if (data[i][2] && isNumber(data[i][2])) {
+        getCategorie = data[i][2].toString().substr(0, 2);
+        recordFound = true;
+        break;
+      }
+    }
+
+
+    let isTheDataExsits;
+    if (recordFound) {
+      isTheDataExsits = await db[categories[getCategorie]].find({
+        "Challan Number": data[11][2],
+      });
+    }
     if (isTheDataExsits.length > 0) {
       exists = true;
       res.status(200).json({
@@ -278,11 +288,12 @@ app.post("/upload", async (req, res) => {
       fs.rmSync(folderPath, { recursive: true });
       return;
     }
-
     const execl = [];
     for (let i = 0; i < data.length; i++) {
-      if (i > 7) {
-        execl.push(data[i]);
+      if (i > 8) {
+        if (data[i].length > 0) {
+          execl.push(data[i]);
+        }
       }
     }
 
@@ -290,9 +301,11 @@ app.post("/upload", async (req, res) => {
     if (!exists) {
       const folderPath = path.join(__dirname, "excel-file");
       fs.rmSync(folderPath, { recursive: true });
-      return res
-        .status(200)
-        .json({ status: 200, message: "file successfully uploaded" });
+      return res.status(200).json({
+        status: 200,
+        message: "file successfully uploaded",
+        data: execl,
+      });
     }
   }, 1000);
 });

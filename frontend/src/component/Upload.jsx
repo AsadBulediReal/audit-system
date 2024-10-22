@@ -118,6 +118,7 @@ const UploadFile = () => {
           }
         );
         setLoading(false);
+        console.log(response.data)
 
         const handeldata = (response) => {
           if (response.data.status === 200) {

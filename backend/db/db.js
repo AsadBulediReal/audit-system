@@ -5,35 +5,25 @@ async function connectDB() {
 }
 
 const sechema = new mongoose.Schema({
-  "Tran Id": { type: Number, required: true },
   "Challan Number": { type: String, required: true },
   "Student Name": { type: String, required: true },
   "Father Name": { type: String, required: true },
-  Surname: { type: String },
-  CNIC: { type: String, required: true },
+  Surname: { type: String, required: true },
   Program: { type: String, required: true },
-  Description: { type: String, required: true },
-  Company: { type: String, required: true },
   Amount: { type: Number, required: true },
-  Channel: { type: String, required: true },
+  Description: { type: String, required: true },
   "Transaction Date": { type: Date, required: true },
-  "Transaction Time": { type: String, required: true },
 });
 
 const nullSechema = new mongoose.Schema({
-  "Tran Id": { type: Number },
   "Challan Number": { type: String },
   "Student Name": { type: String },
   "Father Name": { type: String },
   Surname: { type: String },
-  CNIC: { type: String },
   Program: { type: String },
-  Description: { type: String },
-  Company: { type: String },
   Amount: { type: Number },
-  Channel: { type: String },
+  Description: { type: String },
   "Transaction Date": { type: Date },
-  "Transaction Time": { type: String },
 });
 
 const examination_semester = mongoose.model("examination_semester", sechema);
